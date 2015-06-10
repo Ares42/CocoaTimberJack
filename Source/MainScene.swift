@@ -60,32 +60,33 @@ class MainScene: CCNode {
         _score++
         _ScoreLabel.string = String(_score)
         
-        _branches[0].removeFromParent()
+        //_branches[0].removeFromParent()
     }
     
     func spawnABranch () {
-        var previousBranchY = _branch.position.y
-        var previousBranchSide = _branches[10-1]
-        _branch.position.y = 1
-        if _branches.count < 5 {
-            
-            previousBranchY = _branches.last!.position.y
-            
-        }
         
-        let branchside = Int(arc4random_uniform(99))
-        
-        if (branchside >= 0 && branchside < 44) {
-            //put a branch on the right side
-        } else if (branchside >= 45 && branchside < 90) {
-            //put a branch on the left side
-        } else if (branchside >= 90 && branchside < 99) {
-            //don't spawn a branch
-        }
-        
-        let branch = CCBReader.load("Branch") as! Branch
+//        var previousBranchY = _branch.position.y
+//        var previousBranchSide = _branches[10-1]
+//        _branch.position.y = 1
+//        if _branches.count < 5 {
+//            
+//            previousBranchY = _branches.last!.position.y
+//            
+//        }
+//        
+//        let branchside = Int(arc4random_uniform(99))
+//        
+//        if (branchside >= 0 && branchside < 44) {
+//            //put a branch on the right side
+//        } else if (branchside >= 45 && branchside < 90) {
+//            //put a branch on the left side
+//        } else if (branchside >= 90 && branchside < 99) {
+//            //don't spawn a branch
+//        }
+//        
+//        let branch = CCBReader.load("Branch") as! Branch
 //        branch.position = ccp(+)
-        
+//        
     }
     
     func checkCollision () {
