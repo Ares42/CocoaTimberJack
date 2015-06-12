@@ -1,7 +1,7 @@
 import Foundation
 
 class MainScene: CCNode {
-    
+    //CCNodes
     var _Background : CCNodeGradient!
     var _ScoreLabel : CCLabelTTF!
     var _timer : CCSprite!
@@ -9,104 +9,90 @@ class MainScene: CCNode {
     var _bottom : CCSprite!
     var _restartButton: CCButton!
     
-    var _branch : CCSprite!
-    var _branches: [CCNode] = []
+    //branches
+    var _tree : CCNode!
+    var _piece  : CCSprite!
+    var _Pieces: [CCNode] = []
     let _firstTreePosition: CGFloat = 0
     
+    //variables
     let time : Int = 0
-
     var _score : NSInteger = 0
     var _gameOver = false
     var SW = CCDirector.sharedDirector().viewSize().width
     
+    //CCBLoading
     func didLoadFromCCB() {
         self.userInteractionEnabled = true
         _restartButton.visible = false
-        
-        self.spawnABranch()
     }
     
+    //Testing out the touch began stuff
     override func touchBegan(touch: CCTouch!, withEvent event: CCTouchEvent!) {
+        if (_player.position.x == 222 && _piece.position.x == 276) {
+            self.gameOver()
+        }
         if (_gameOver == false) {
+            
+            //touch on the right side of the screen
             if (touch.locationInWorld().x > SW/2) {
                 println("Right")
-                
                 _player.anchorPoint.x = 1
                 _player.flipX = false
-                _player.position.x = 1
+                _player.position.x = SW
                 
+            //touch on the left side of the screen
             } else if (touch.locationInWorld().x < SW/2) {
                 println("Left")
-                
                 _player.anchorPoint.x = 0
                 _player.flipX = true
                 _player.position.x = 0
-                
             }
-        
         }
+        
         println(String(stringInterpolationSegment: touch.locationInWorld()))
-        updateScore()
-    }
-    
-    func ccPhysicsCollisionBegin(pair: CCPhysicsCollisionPair!, _character: CCNode!, _tree1: CCNode!) -> Bool {
-        self.gameOver()
-        return true
+        self.spawnABranch()
+        self.updateScore()
     }
     
     func updateScore () {
         // to do: Implement score increase
-        
         _score++
         _ScoreLabel.string = String(_score)
+    }
+    
+    func spawnABranch () {
+        let _newpiece: Piece! = Piece()
+        
+        //Creating the randomness for a branch
+        let branchside = Int(arc4random_uniform(99))
+        
+        if (branchside >= 0 && branchside < 44) {
+            _newpiece.setupBranchOnSide("right")
+        } else if (branchside >= 45 && branchside < 90) {
+            _newpiece.setupBranchOnSide("left")
+        } else if (branchside >= 90 && branchside < 99) {
+
+        }
+        
+        _Pieces.append(_newpiece)
+        _tree.addChild(_newpiece)
         
         //_branches[0].removeFromParent()
     }
     
-    func spawnABranch () {
-        
-//        var previousBranchY = _branch.position.y
-//        var previousBranchSide = _branches[10-1]
-//        _branch.position.y = 1
-//        if _branches.count < 5 {
-//            
-//            previousBranchY = _branches.last!.position.y
-//            
-//        }
-//        
-//        let branchside = Int(arc4random_uniform(99))
-//        
-//        if (branchside >= 0 && branchside < 44) {
-//            //put a branch on the right side
-//        } else if (branchside >= 45 && branchside < 90) {
-//            //put a branch on the left side
-//        } else if (branchside >= 90 && branchside < 99) {
-//            //don't spawn a branch
-//        }
-//        
-//        let branch = CCBReader.load("Branch") as! Branch
-//        branch.position = ccp(+)
-//        
-    }
-    
-    func checkCollision () {
-        
-    }
-    
     override func update(delta: CCTime) {
-        for branch in _branches.reverse() {
-            if (branch.position.y <= 0) {
-                branch.removeFromParent()
-                _branches.removeAtIndex(find(_branches, branch)!)
-                self.spawnABranch()
-            }
-        }
         
-        
+    }
+    
+    //player has hit a tree
+    func ccPhysicsCollisionBegin(pair: CCPhysicsCollisionPair!, hero: CCSprite!, branch: CCSprite!) -> Bool {
+        self.gameOver()
+        return true
     }
     
     func gameOver () {
-        
+        _restartButton.visible = true
+        _gameOver = true
     }
-    
 }
