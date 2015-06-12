@@ -8,10 +8,29 @@ class MainScene: CCNode {
     var _player : CCSprite!
     var _bottom : CCSprite!
     var _restartButton: CCButton!
-    
     //branches
     var _tree : CCNode!
-    var _piece  : CCSprite!
+    
+//    var _piece0 = CCBReader.load("_piece0") as! Piece
+//    var _piece1 = CCBReader.load("_piece1") as! Piece
+//    var _piece2 = CCBReader.load("_piece2") as! Piece
+//    var _piece3 = CCBReader.load("_piece3") as! Piece
+//    var _piece4 = CCBReader.load("_piece4") as! Piece
+//    var _piece5 = CCBReader.load("_piece5") as! Piece
+//    var _piece6 = CCBReader.load("_piece6") as! Piece
+//    var _piece7 = CCBReader.load("_piece7") as! Piece
+    
+    
+    var _piece1: CCNode!
+    var _piece2: CCNode!
+    var _piece3: CCNode!
+    var _piece4: CCNode!
+    var _piece5: CCNode!
+    var _piece6: CCNode!
+    var _piece7: CCNode!
+    
+
+    
     var _Pieces: [CCNode] = []
     let _firstTreePosition: CGFloat = 0
     
@@ -25,13 +44,18 @@ class MainScene: CCNode {
     func didLoadFromCCB() {
         self.userInteractionEnabled = true
         _restartButton.visible = false
+    
+//        self.spawnABranch()
+//        self.spawnABranch()
+//        self.spawnABranch()
+//        self.spawnABranch()
+//        self.spawnABranch()
+//        self.spawnABranch()
+//        self.spawnABranch()
     }
     
     //Testing out the touch began stuff
     override func touchBegan(touch: CCTouch!, withEvent event: CCTouchEvent!) {
-        if (_player.position.x == 222 && _piece.position.x == 276) {
-            self.gameOver()
-        }
         if (_gameOver == false) {
             
             //touch on the right side of the screen
@@ -62,7 +86,7 @@ class MainScene: CCNode {
     }
     
     func spawnABranch () {
-        let _newpiece: Piece! = Piece()
+        var _newpiece = CCBReader.load("Piece") as! Piece
         
         //Creating the randomness for a branch
         let branchside = Int(arc4random_uniform(99))
@@ -77,6 +101,7 @@ class MainScene: CCNode {
         
         _Pieces.append(_newpiece)
         _tree.addChild(_newpiece)
+        
         
         //_branches[0].removeFromParent()
     }
