@@ -10,17 +10,9 @@ class MainScene: CCNode {
     var _restartButton: CCButton!
     //branches
     var _tree : CCNode!
-    
-//    var _piece0 = CCBReader.load("_piece0") as! Piece
-//    var _piece1 = CCBReader.load("_piece1") as! Piece
-//    var _piece2 = CCBReader.load("_piece2") as! Piece
-//    var _piece3 = CCBReader.load("_piece3") as! Piece
-//    var _piece4 = CCBReader.load("_piece4") as! Piece
-//    var _piece5 = CCBReader.load("_piece5") as! Piece
-//    var _piece6 = CCBReader.load("_piece6") as! Piece
-//    var _piece7 = CCBReader.load("_piece7") as! Piece
-    
-    
+
+    let _firstPiecePosition: CGFloat = 280
+    var _piece0: CCNode!
     var _piece1: CCNode!
     var _piece2: CCNode!
     var _piece3: CCNode!
@@ -29,10 +21,8 @@ class MainScene: CCNode {
     var _piece6: CCNode!
     var _piece7: CCNode!
     
-
-    
     var _Pieces: [CCNode] = []
-    let _firstTreePosition: CGFloat = 0
+    
     
     //variables
     let time : Int = 0
@@ -44,14 +34,13 @@ class MainScene: CCNode {
     func didLoadFromCCB() {
         self.userInteractionEnabled = true
         _restartButton.visible = false
-    
-//        self.spawnABranch()
-//        self.spawnABranch()
-//        self.spawnABranch()
-//        self.spawnABranch()
-//        self.spawnABranch()
-//        self.spawnABranch()
-//        self.spawnABranch()
+        
+        self.spawnABranch("none")
+        self.spawnABranch(pickRandomBranchSide())
+        self.spawnABranch(pickRandomBranchSide())
+        self.spawnABranch(pickRandomBranchSide())
+        self.spawnABranch(pickRandomBranchSide())
+
     }
     
     //Testing out the touch began stuff
@@ -60,64 +49,115 @@ class MainScene: CCNode {
             
             //touch on the right side of the screen
             if (touch.locationInWorld().x > SW/2) {
-                println("Right")
                 _player.anchorPoint.x = 1
                 _player.flipX = false
                 _player.position.x = SW
                 
             //touch on the left side of the screen
             } else if (touch.locationInWorld().x < SW/2) {
-                println("Left")
                 _player.anchorPoint.x = 0
                 _player.flipX = true
                 _player.position.x = 0
             }
+            self.updateScore()
+            self.spawnABranch(pickRandomBranchSide())
+            self.removeBranchFromTree()
         }
-        
-        println(String(stringInterpolationSegment: touch.locationInWorld()))
-        self.spawnABranch()
-        self.updateScore()
     }
     
     func updateScore () {
-        // to do: Implement score increase
+        //increase the score
         _score++
         _ScoreLabel.string = String(_score)
+        
+        //increase the size of the timer
+        if (_timer.scaleX < 1) {
+            var delta: Float = 0.1
+            _timer.scaleX = _timer.scaleX + delta
+        }
     }
     
-    func spawnABranch () {
-        var _newpiece = CCBReader.load("Piece") as! Piece
-        
-        //Creating the randomness for a branch
+    func pickRandomBranchSide () -> String{
         let branchside = Int(arc4random_uniform(99))
+        var side: String!
         
         if (branchside >= 0 && branchside < 44) {
-            _newpiece.setupBranchOnSide("right")
+            side = "right"
         } else if (branchside >= 45 && branchside < 90) {
-            _newpiece.setupBranchOnSide("left")
+            side = "left"
         } else if (branchside >= 90 && branchside < 99) {
-
+            side = "none"
         }
+        return (side)
+    }
+    
+    func spawnABranch (side: String) {
+        var _newPiece = CCBReader.load("Piece") as! Piece
         
-        _Pieces.append(_newpiece)
-        _tree.addChild(_newpiece)
+        _newPiece.setupBranchOnSide(side)
+        
+//        var nextPieceLocation = CGFloat((_Pieces.count * 60) + 0)
         
         
-        //_branches[0].removeFromParent()
+        var nextPieceLocation = CGFloat((_Pieces.count * 100) + 30)
+
+        
+        _newPiece.positionInPoints = ccp(146, nextPieceLocation)
+        
+//        _newPiece.anchorPoint = ccp(0.5, 0)
+        println(nextPieceLocation)
+        println(_newPiece.position)
+        println(_newPiece.anchorPoint)
+        
+        _Pieces.append(_newPiece)
+        _tree.addChild(_newPiece)
+        
+        //
+    }
+    
+    func removeBranchFromTree() {
+        _Pieces[0].removeFromParent()
+//        var previousPieceLocation = CGFloat(((_Pieces.count - 1) * 40) + 30)
+        var i: Int = 0
+        for Piece in _Pieces {
+            _Pieces[i].positionInPoints = ccp(146, _Pieces[i].positionInPoints.y - 100)
+            i++
+        }
     }
     
     override func update(delta: CCTime) {
+        if (_timer.scaleX > 0) {
+            var delta: Float = 0.001
+            _timer.scaleX = _timer.scaleX - delta
+        } else {
+            self.gameOver()
+        }
         
     }
     
     //player has hit a tree
-    func ccPhysicsCollisionBegin(pair: CCPhysicsCollisionPair!, hero: CCSprite!, branch: CCSprite!) -> Bool {
+    func ccPhysicsCollisionBegin(pair: CCPhysicsCollisionPair!, hero: CCSprite!, branchLeft: CCSprite!) -> Bool {
         self.gameOver()
         return true
     }
     
+    func ccPhysicsCollisionBegin(pair: CCPhysicsCollisionPair!, hero: CCSprite!, branchRight: CCSprite!) -> Bool {
+        self.gameOver()
+        return true
+    }
+    
+    
     func gameOver () {
         _restartButton.visible = true
         _gameOver = true
+        _ScoreLabel.string = "GAME OVER"
+    }
+    
+    func restart() {
+        _gameOver = false
+        _restartButton.visible = false
+        _score = 0
+        _ScoreLabel.string = "0"
+        _timer.scaleX = 1
     }
 }
