@@ -8,6 +8,7 @@ class MainScene: CCNode {
     var _player : CCSprite!
     var _bottom : CCSprite!
     var _restartButton: CCButton!
+    
     //branches
     var _tree : CCNode!
 
@@ -29,6 +30,8 @@ class MainScene: CCNode {
     var _score : NSInteger = 0
     var _gameOver = false
     var SW = CCDirector.sharedDirector().viewSize().width
+    var playerSide: String!
+    var treeSide: String!
     
     //CCBLoading
     func didLoadFromCCB() {
@@ -40,7 +43,9 @@ class MainScene: CCNode {
         self.spawnABranch(pickRandomBranchSide())
         self.spawnABranch(pickRandomBranchSide())
         self.spawnABranch(pickRandomBranchSide())
-
+        self.spawnABranch(pickRandomBranchSide())
+        self.spawnABranch(pickRandomBranchSide())
+        self.spawnABranch(pickRandomBranchSide())
     }
     
     //Testing out the touch began stuff
@@ -52,16 +57,19 @@ class MainScene: CCNode {
                 _player.anchorPoint.x = 1
                 _player.flipX = false
                 _player.position.x = SW
+                playerSide = "right"
                 
             //touch on the left side of the screen
             } else if (touch.locationInWorld().x < SW/2) {
                 _player.anchorPoint.x = 0
                 _player.flipX = true
                 _player.position.x = 0
+                playerSide = "left"
             }
             self.updateScore()
             self.spawnABranch(pickRandomBranchSide())
             self.removeBranchFromTree()
+            self.checkIfGameOver()
         }
     }
     
@@ -79,38 +87,35 @@ class MainScene: CCNode {
     
     func pickRandomBranchSide () -> String{
         let branchside = Int(arc4random_uniform(99))
-        var side: String!
         
         if (branchside >= 0 && branchside < 44) {
-            side = "right"
+            treeSide = "right"
         } else if (branchside >= 45 && branchside < 90) {
-            side = "left"
+            treeSide = "left"
         } else if (branchside >= 90 && branchside < 99) {
-            side = "none"
+            treeSide = "none"
         }
-        return (side)
+        
+        return (treeSide)
     }
     
     func spawnABranch (side: String) {
         var _newPiece = CCBReader.load("Piece") as! Piece
         
         _newPiece.setupBranchOnSide(side)
-        
-//        var nextPieceLocation = CGFloat((_Pieces.count * 60) + 0)
-        
-        
-        var nextPieceLocation = CGFloat((_Pieces.count * 100) + 30)
+        _Pieces.append(_newPiece)
+        _tree.addChild(_newPiece)
 
         
+//        _Pieces[_Pieces.count].positionInPoints = ccp(146, _Pieces[(_Pieces.count)].positionInPoints.y + 40)
+
+        var nextPieceLocation = CGFloat((_Pieces.count * 40) + 26)
         _newPiece.positionInPoints = ccp(146, nextPieceLocation)
         
-//        _newPiece.anchorPoint = ccp(0.5, 0)
-        println(nextPieceLocation)
         println(_newPiece.position)
         println(_newPiece.anchorPoint)
         
-        _Pieces.append(_newPiece)
-        _tree.addChild(_newPiece)
+
         
         //
     }
@@ -120,7 +125,7 @@ class MainScene: CCNode {
 //        var previousPieceLocation = CGFloat(((_Pieces.count - 1) * 40) + 30)
         var i: Int = 0
         for Piece in _Pieces {
-            _Pieces[i].positionInPoints = ccp(146, _Pieces[i].positionInPoints.y - 100)
+            _Pieces[i].positionInPoints = ccp(146, _Pieces[i].positionInPoints.y - 40)
             i++
         }
     }
@@ -146,6 +151,11 @@ class MainScene: CCNode {
         return true
     }
     
+    func checkIfGameOver () {
+        if (treeSide == playerSide) {
+            self.gameOver()
+        }
+    }
     
     func gameOver () {
         _restartButton.visible = true
