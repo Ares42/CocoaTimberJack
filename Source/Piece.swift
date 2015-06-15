@@ -13,20 +13,14 @@ class Piece: CCNode {
     var _branchLeft : CCSprite!
     var _center : CCSprite!
     var _branchRight : CCSprite!
+    var _treeSide: String!
     
     func didLoadFromCCB() {
         //allow branch to be a physics body, to detect for collisions
-
-//        _piece.addChild(_branchRight)
-//        _piece.addChild(_center)
-//        _piece.addChild(_branchLeft)
         
     }
     
     func setupBranchOnSide(side: String) {
-        //set branch anchor point to the bottom middle of the node
-        
-//        var _piece = CCBReader.load("Piece") as! Piece
 
         //right side
         if (side == "right") {

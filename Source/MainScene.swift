@@ -140,18 +140,9 @@ class MainScene: CCNode {
         
     }
     
-    //player has hit a tree
-    func ccPhysicsCollisionBegin(pair: CCPhysicsCollisionPair!, hero: CCSprite!, branchLeft: CCSprite!) -> Bool {
-        self.gameOver()
-        return true
-    }
-    
-    func ccPhysicsCollisionBegin(pair: CCPhysicsCollisionPair!, hero: CCSprite!, branchRight: CCSprite!) -> Bool {
-        self.gameOver()
-        return true
-    }
-    
     func checkIfGameOver () {
+        println("Tree" + treeSide)
+        println("Player" + playerSide)
         if (treeSide == playerSide) {
             self.gameOver()
         }
