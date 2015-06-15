@@ -13,7 +13,7 @@ class Piece: CCNode {
     var _branchLeft : CCSprite!
     var _center : CCSprite!
     var _branchRight : CCSprite!
-    var _treeSide: String!
+    var treeSide: String!
     
     func didLoadFromCCB() {
         //allow branch to be a physics body, to detect for collisions
@@ -25,25 +25,22 @@ class Piece: CCNode {
         //right side
         if (side == "right") {
             _branchRight.visible = true
-//            _branchRight.physicsBody.sensor = true
             _branchLeft.visible = false
-//            _branchLeft.physicsBody.sensor = false
+            treeSide = "right"
         }
         
         //left side
         if (side == "left") {
             _branchRight.visible = false
-//            _branchRight.physicsBody.sensor = false
             _branchLeft.visible = true
-//            _branchLeft.physicsBody.sensor = true
+            treeSide = "left"
         }
         
         //no side
         if (side == "none") {
             _branchRight.visible = false
-//            _branchRight.physicsBody.sensor = false
             _branchLeft.visible = false
-//            _branchLeft.physicsBody.sensor = false
+            treeSide = "none"
         }
     }
 }
